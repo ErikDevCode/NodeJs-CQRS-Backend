@@ -1,11 +1,13 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 const generateSchemas = require('./swaggerSchemas');
 
+const schemas = generateSchemas();
+
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Node.js Backend API',
+      title: 'Node.js CQRS Backend API',
       version: '1.0.0',
       description: 'Documentación dinámica de la API',
     },
@@ -15,7 +17,21 @@ const options = {
         description: 'Servidor local',
       },
     ],
-    ...generateSchemas(), // Incluir esquemas generados automáticamente
+    components: {
+      ...schemas.components, // Incluir esquemas generados automáticamente
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        BearerAuth: [],
+      },
+    ],
   },
   apis: ['./src/routes/*.js'], // Rutas con anotaciones Swagger
 };

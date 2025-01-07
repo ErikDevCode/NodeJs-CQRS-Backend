@@ -9,6 +9,8 @@ const router = express.Router();
  *   get:
  *     summary: Obtiene todos los usuarios
  *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de usuarios

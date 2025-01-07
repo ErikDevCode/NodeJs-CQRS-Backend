@@ -2,9 +2,11 @@ const express = require('express');
 const configureMediator = require('./src/mediator/MediatorConfig');
 const routes = require('./src/routes');
 const errorHandler = require('./src/middlewares/error.handler');
-const sequelize = require('./config/database'); // Conexión a la base de datos
+const sequelize = require('./config/database');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./config/swagger.config');
+const authenticateToken = require('./src/middlewares/auth.middleware');
+
 require('dotenv').config();
 
 // Configurar el Mediator
@@ -18,6 +20,13 @@ app.use(express.json());
 
 // Registrar Swagger UI
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/v1/auth')) {
+    return next(); // Excluir todos los endpoints bajo "/api/v1/auth"
+  }
+  return authenticateToken(req, res, next); // Aplicar autenticación a todo lo demás
+});
 
 // Registrar rutas principales
 app.use('/api/v1', routes);

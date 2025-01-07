@@ -4,13 +4,13 @@ const Mediator = require('./Mediator');
 const GetAllUsersQuery = require('../features/Users/Queries/GetAllUsers/GetAllUsersQuery');
 const GetAllUsersHandler = require('../features/Users/Queries/GetAllUsers/GetAllUsersHandler');
 
-// const GetUserByIdQuery = require('../queries/user/GetUserByIdQuery');
-// const GetUserByIdHandler = require('../handlers/user/GetUserByIdHandler');
+const LoginCommand = require('../features/Auth/Commands/Login/LoginCommand');
+const LoginHandler = require('../features/Auth/Commands/Login/LoginHandler');
 
 function configureMediator() {
   // Registrar handlers
   Mediator.register(GetAllUsersQuery.name, new GetAllUsersHandler());
-  //Mediator.register(GetUserByIdQuery.name, new GetUserByIdHandler());
+  Mediator.register(LoginCommand.name, new LoginHandler());
 }
 
 module.exports = configureMediator;

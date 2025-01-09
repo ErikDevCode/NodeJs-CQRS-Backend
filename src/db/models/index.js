@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
-const sequelize = require('../../config/database'); // Importa tu conexión configurada
+const sequelize = require('../../../config/database'); // Importa tu conexión configurada
 
 const db = {};
 
@@ -10,19 +10,17 @@ fs.readdirSync(__dirname)
   .filter((file) => file !== 'index.js' && file.endsWith('.js'))
   .forEach((file) => {
     const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model; // Añade el modelo a la colección `db`
+    db[model.name] = model;
   });
 
-// Asociar modelos si es necesario
+// Asociar los modelos
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
 });
 
-// Exportar Sequelize y los modelos
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
-

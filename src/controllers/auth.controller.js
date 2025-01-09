@@ -1,28 +1,41 @@
 const Mediator = require('../mediator/Mediator');
 const LoginCommand = require('../features/Auth/Commands/Login/LoginCommand');
+const RefreshTokenCommand = require('../features/Auth/Commands/RefreshToken/RefreshTokenCommand');
 
 class AuthController {
   async login(req, res, next) {
     try {
-      const { routeOrEmail, password } = req.body;
+      const { email, password } = req.body;
 
-      if (!routeOrEmail || !password) {
+      const clientIp = req.headers['x-forwarded-for'] || req.ip;
+      if (!email || !password) {
         return res.status(400).json({ message: 'Datos incompletos' });
       }
 
-      // Enviar el comando al Mediator
-      const command = new LoginCommand(routeOrEmail, password);
-      const { token, user } = await Mediator.send(command);
+      const command = new LoginCommand(email, password, clientIp);
+      const result = await Mediator.send(command);
 
       return res.status(200).json({
         message: 'Login exitoso',
-        token,
-        user: {
-          appUserId: user.appUserId,
-          routeOrEmail: user.routeOrEmail,
-          createdAt: user.createdAt,
-        },
+        ...result,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async refreshToken(req, res, next) {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) {
+        return res.status(400).json({ message: 'Refresh token requerido' });
+      }
+
+      const command = new RefreshTokenCommand(refreshToken);
+      const result = await Mediator.send(command);
+
+      return res.status(200).json(result);
     } catch (error) {
       next(error);
     }

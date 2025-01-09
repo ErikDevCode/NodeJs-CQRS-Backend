@@ -1,35 +1,17 @@
-const User = require('../../db/models/user.model');
+const db = require('../../db/models');
 
 class UserRepository {
+  async findByEmailWithPassword(email) {
+    return await db.User.findOne({
+      where: { email },
+      include: [{ model: db.UserPassword, as: 'password' }], // Incluye la relación con UserPassword
+    });
+  };
+
   async findAll() {
-    return await User.findAll();
-  }
-
-  async findById(id) {
-    return await User.findByPk(id);
-  }
-
-  async findByEmail(email) {
-    return await User.findOne({ where: { email } });
-  }
-
-  async create(userData) {
-    return await User.create(userData);
-  }
-
-  async update(id, updatedData) {
-    const user = await User.findByPk(id);
-    if (!user) return null;
-    return await user.update(updatedData);
-  }
-
-  async delete(id) {
-    const user = await User.findByPk(id);
-    if (!user) return null;
-    await user.destroy();
-    return true;
-  }
-}
+    return await db.User.findAll(); // Consulta todos los usuarios
+  };
+};
 
 module.exports = new UserRepository();
 

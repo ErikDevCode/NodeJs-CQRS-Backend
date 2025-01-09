@@ -1,14 +1,9 @@
-const UserRepository = require('../../../../repositories/user/user.repository');
-const UserDto = require('../../../../dtos/user/UserDto');
+const UserRepository = require('../../../../repositories/user/user.repository')
 
 class GetAllUsersHandler {
-  constructor() {
-    this.userRepository = UserRepository;
-  }
+  async handle() {
 
-  async handle(query) {
-
-    const users = await this.userRepository.findAll();
+    const users = await UserRepository.findAll();
     return users;
   }
 }

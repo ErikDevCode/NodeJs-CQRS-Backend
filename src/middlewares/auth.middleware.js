@@ -5,16 +5,16 @@ function authenticateToken(req, res, next) {
   const token = authHeader && authHeader.split(' ')[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Token no proporcionado' });
+    return res.status(401).json({ message: 'No autorizado: Falta el token' });
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = decoded; // Adjuntar datos decodificados al request
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ message: 'Token inválido o expirado' });
+    }
+    req.user = user;
     next();
-  } catch (error) {
-    return res.status(403).json({ message: 'Token no válido' });
-  }
-}
+  });
+};
 
 module.exports = authenticateToken;

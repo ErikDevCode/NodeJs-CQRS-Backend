@@ -10,6 +10,11 @@ const router = express.Router();
 
 // Registrar rutas específicas
 router.use('/auth', authRouter);
+router.use(authenticateToken);
 router.use('/users', usersRouter); // Rutas de usuarios (e.g., /api/v1/users)
+
+router.use((req, res, next) => {
+    res.status(404).json({ message: 'Ruta no encontrada' });
+  });
 
 module.exports = router;
